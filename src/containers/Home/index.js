@@ -13,7 +13,6 @@ const Home = (props) => {
      <div id="layoutSidenav_content">
             <main>
               <div className="container-fluid">
-                <h2 className="mt-30 page-title">Dashboard</h2>
                 <ol className="breadcrumb mb-30">
                   <li className="breadcrumb-item active">Dashboard</li>
                 </ol>

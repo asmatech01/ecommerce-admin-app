@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
-import { Container, Row, Col, Table } from "react-bootstrap";
+import { Container, Row, Col, Table, Card } from "react-bootstrap";
 import Input from "../../components/UI/Input";
 import Modal from "../../components/UI/Modal";
 import { useSelector, useDispatch } from "react-redux";
@@ -33,6 +33,12 @@ const Products = (props) => {
   const dispatch = useDispatch();
   const handleClose = () => {
     setShow(false);
+  };
+
+  const [activeAccordion, setActiveAccordion] = useState("");
+
+  const toggleAccordion = (categoryId) => {
+    setActiveAccordion(activeAccordion === categoryId ? "" : categoryId);
   };
   // useEffect(() => {
   //   dispatch(getProducts());
@@ -96,60 +102,139 @@ const Products = (props) => {
   };
 
   const renderProducts = () => {
-    console.log("here is prodcts", product);
+    // console.log("here is prodcts", product);
     return (
-      <Table style={{ fontSize: 12 }} responsive="sm">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Color</th>
-            <th>Category</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {product.products.length > 0
-            ? product.products.map((product, index) => (
-                <tr key={product._id}>
-                  <td>{index + 1}</td>
-                  <td>{product.name}</td>
-                  <td>{product.price}</td>
-                  <td>{product.quantity}</td>
-                  <td>{product.color}</td>
-                  <td>{product.category.name}</td>
-                  <td>
-                    <button
-                      className="view-btn hover-btn mx-2"
-                      onClick={() => showProductDetailsModal(product)}
-                    >
-                      info
-                    </button>
-                    <button
-                      className="view-btn hover-btn mx-2"
-                      onClick={() => showEditProductModal(product)}
-                    >
-                      edit
-                    </button>
-                    <button
-                      className="view-btn hover-btn"
-                      onClick={() => {
-                        const productId = product._id;
-                        dispatch(deleteProductById(productId));
-                      }}
-                    >
-                      del
-                    </button>
-                  </td>
-                </tr>
-              ))
-            : null}
-        </tbody>
-      </Table>
+      <div>
+        {categoryList.map((category) => (
+          <Card key={category._id}>
+            <Card.Header
+              onClick={() => toggleAccordion(category._id)}
+              style={{ cursor: "pointer" }}
+            >
+              {category.name}
+            </Card.Header>
+            {activeAccordion === category._id && (
+              <Card.Body>
+                <Table style={{ fontSize: 12 }} responsive="sm">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Price</th>
+                      <th>Quantity</th>
+                      <th>Color</th>
+                      <th>Category</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  {product.products
+                    .filter((prod) => prod.category._id === category._id)
+                    .map((filteredProduct, index) => (
+                      <tr key={filteredProduct._id}>
+                        {console.log(
+                          "here is filtered products",
+                          filteredProduct
+                        )}
+                        <td>{index + 1}</td>
+                        <td> {filteredProduct.name}</td>
+                        <td>{filteredProduct.price}</td>
+                        <td>{filteredProduct.quantity}</td>
+                        <td>{filteredProduct.color}</td>
+                        <td>{filteredProduct.category.name}</td>
+                        {/* //                 <td>{product.name}</td>
+  //                 <td>{product.price}</td>
+  //                 <td>{product.quantity}</td>
+  //                 <td>{product.color}</td>
+  //                 <td>{product.category.name}</td> */}
+                        <td>
+                          <button
+                            className="view-btn hover-btn mx-2"
+                            onClick={() => showProductDetailsModal(filteredProduct)}
+                          >
+                            info
+                          </button>
+                          <button
+                            className="view-btn hover-btn mx-2"
+                            onClick={() => showEditProductModal(filteredProduct)}
+                          >
+                            edit
+                          </button>
+                          <button
+                            className="view-btn hover-btn"
+                            onClick={() => {
+                              const productId = filteredProduct._id;
+                              dispatch(deleteProductById(productId));
+                            }}
+                          >
+                            del
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </Table>
+              </Card.Body>
+            )}
+          </Card>
+        ))}
+      </div>
     );
   };
+
+  // const renderProducts = () => {
+  //   console.log("here is prodcts", product);
+  //   return (
+  //     <Table style={{ fontSize: 12 }} responsive="sm">
+  //       <thead>
+  //         <tr>
+  //           <th>#</th>
+  //           <th>Name</th>
+  //           <th>Price</th>
+  //           <th>Quantity</th>
+  //           <th>Color</th>
+  //           <th>Category</th>
+  //           <th>Actions</th>
+  //         </tr>
+  //       </thead>
+  //       <tbody>
+  //         {product.products.length > 0
+  //           ? product.products.map((product, index) => (
+  //               <tr key={product._id}>
+  //                 <td>{index + 1}</td>
+  //                 <td>{product.name}</td>
+  //                 <td>{product.price}</td>
+  //                 <td>{product.quantity}</td>
+  //                 <td>{product.color}</td>
+  //                 <td>{product.category.name}</td>
+  //                 <td>
+  //                   <button
+  //                     className="view-btn hover-btn mx-2"
+  //                     onClick={() => showProductDetailsModal(product)}
+  //                   >
+  //                     info
+  //                   </button>
+  //                   <button
+  //                     className="view-btn hover-btn mx-2"
+  //                     onClick={() => showEditProductModal(product)}
+  //                   >
+  //                     edit
+  //                   </button>
+  //                   <button
+  //                     className="view-btn hover-btn"
+  //                     onClick={() => {
+  //                       const productId = product._id;
+  //                       dispatch(deleteProductById(productId));
+  //                     }}
+  //                   >
+  //                     del
+  //                   </button>
+  //                 </td>
+  //               </tr>
+  //             ))
+  //           : null}
+  //       </tbody>
+  //     </Table>
+  //   );
+  // };
 
   const renderAddProductModal = () => {
     return (
