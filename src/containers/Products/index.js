@@ -17,6 +17,7 @@ const Products = (props) => {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [color, setColor] = useState("");
+  const [brand, setBrand] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -41,6 +42,7 @@ const Products = (props) => {
     const form = new FormData();
     form.append("name", name);
     form.append("quantity", quantity);
+    form.append("brand", brand);
     form.append("color", color);
     form.append("price", price);
     form.append("description", description);
@@ -54,26 +56,29 @@ const Products = (props) => {
   };
   const handleShow = () => setShow(true);
 
-    // Function to update the product
-    const updateProduct = () => {
-      // Create a form with updated product details
-      const form = new FormData();
-      form.append("name", editProduct.name);
-      form.append("quantity", editProduct.quantity);
-      form.append("color", editProduct.color);
-      form.append("price", editProduct.price);
-      form.append("description", editProduct.description);
-      form.append("category", editProduct.category._id);
-      for (let pic of productPictures) {
-        form.append("productPicture", pic);
-      }
-      let productId = editProduct._id
-      // Dispatch the update action to the backend
-      // Add the code to dispatch the update action here
-      dispatch(updateProductById(productId, form)).then(() => closeEditProductModal());
-      // Close the edit modal
-      // closeEditProductModal();
-    };
+  // Function to update the product
+  const updateProduct = () => {
+    // Create a form with updated product details
+    const form = new FormData();
+    form.append("name", editProduct.name);
+    form.append("quantity", editProduct.quantity);
+    form.append("brnad", editProduct.brand);
+    form.append("color", editProduct.color);
+    form.append("price", editProduct.price);
+    form.append("description", editProduct.description);
+    form.append("category", editProduct.category._id);
+    for (let pic of productPictures) {
+      form.append("productPicture", pic);
+    }
+    let productId = editProduct._id;
+    // Dispatch the update action to the backend
+    // Add the code to dispatch the update action here
+    dispatch(updateProductById(productId, form)).then(() =>
+      closeEditProductModal()
+    );
+    // Close the edit modal
+    // closeEditProductModal();
+  };
 
   const createCategoryList = (categories, options = []) => {
     for (let category of categories) {
@@ -91,7 +96,7 @@ const Products = (props) => {
   };
 
   const renderProducts = () => {
-    console.log("here is prodcts" , product)
+    console.log("here is prodcts", product);
     return (
       <Table style={{ fontSize: 12 }} responsive="sm">
         <thead>
@@ -167,6 +172,12 @@ const Products = (props) => {
           onChange={(e) => setQuantity(e.target.value)}
         />
         <Input
+          label="Brand"
+          value={brand}
+          placeholder={`Brand`}
+          onChange={(e) => setBrand(e.target.value)}
+        />
+        <Input
           label="color"
           value={color}
           placeholder={`Color`}
@@ -238,6 +249,13 @@ const Products = (props) => {
           }
         />
         <Input
+          label="Brand"
+          value={editProduct.brand}
+          onChange={(e) =>
+            setEditProduct({ ...editProduct, brand: e.target.value })
+          }
+        />
+        <Input
           label="Color"
           value={editProduct.color}
           onChange={(e) =>
@@ -279,7 +297,8 @@ const Products = (props) => {
           <Col>
             <label className="key">Product Pictures</label>
             {/* <div style={{ display: "flex" }}> */}
-              {editProduct.productImage && editProduct.productImage.length > 0 ?( editProduct.productImage.map((picture) => (
+            {editProduct.productImage && editProduct.productImage.length > 0 ? (
+              editProduct.productImage.map((picture) => (
                 <div className="productImgContainer" key={picture._id}>
                   <img
                     // key={picture._id}
@@ -288,9 +307,9 @@ const Products = (props) => {
                     alt=""
                   />
                 </div>
-              )) 
-              ) : (
-                <p>No product pictures available.</p>
+              ))
+            ) : (
+              <p>No product pictures available.</p>
             )}
             {/* </div> */}
           </Col>
@@ -309,17 +328,17 @@ const Products = (props) => {
     );
   };
 
- // Function to open the edit modal
- const showEditProductModal = (product) => {
-  setEditProduct(product);
-  setEditModalVisible(true);
-};
+  // Function to open the edit modal
+  const showEditProductModal = (product) => {
+    setEditProduct(product);
+    setEditModalVisible(true);
+  };
 
-// Function to close the edit modal
-const closeEditProductModal = () => {
-  setEditModalVisible(false);
-  setEditProduct({}); // Clear the product details
-};
+  // Function to close the edit modal
+  const closeEditProductModal = () => {
+    setEditModalVisible(false);
+    setEditProduct({}); // Clear the product details
+  };
 
   const handleCloseProductDetailsModal = () => {
     setProductDetailModal(false);
@@ -364,10 +383,16 @@ const closeEditProductModal = () => {
           </Col>
         </Row>
         <Row>
-          <Col md="12">
+          <Col md="6">
+            <label className="key">Brand</label>
+            <p className="value">{productDetails.brand}</p>
+          </Col>
+          <Col md="6">
             <label className="key">Color</label>
             <p className="value">{productDetails.color}</p>
           </Col>
+        </Row>
+        <Row>
           <Col md="12">
             <label className="key">Description</label>
             <p className="value">{productDetails.description}</p>
